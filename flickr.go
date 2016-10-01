@@ -284,6 +284,48 @@ func (c *Client) GetPeopleInfo(args map[string]string) (*PersonResponse, error) 
 	return &r.Person, nil
 }
 
+func getPhotoInfoURL(c *Client, id string) string {
+	return makeURL(c, "flickr.photos.getInfo", map[string]string{"photo_id": id}, true)
+}
+
+// Implements https://www.flickr.com/services/api/flickr.photos.getInfo.html
+func (c *Client) GetPhotoInfo(photo *Photo) (*PhotoInfoResponse, error) {
+	r := struct {
+		Stat string      `xml:"stat,attr"`
+		Err  flickrError `xml:"err"`
+		PhotoInfoResponse
+	}{}
+	if err := flickrGet(c, getPhotoInfoURL(c, photo.ID), &r); err != nil {
+		return nil, err
+	}
+	if r.Stat != "ok" {
+		return nil, r.Err.Err()
+	}
+
+	return &r.PhotoInfoResponse, nil
+}
+
+func getPhotoFavoritesURL(c *Client, id string, page, perPage int) string {
+	return makeURL(c, "flickr.photos.getFavorites", map[string]string{"photo_id": id, "page": fmt.Sprintf("%d", page), "per_page": fmt.Sprintf("%d", perPage)}, true)
+}
+
+// Implements https://www.flickr.com/services/api/flickr.photos.getFavorites.html
+func (c *Client) GetPhotoFavorites(photo *Photo, page, perPage int) (*PhotoFavoritesResponse, error) {
+	r := struct {
+		Stat  string                 `xml:"stat,attr"`
+		Err   flickrError            `xml:"err"`
+		Faves PhotoFavoritesResponse `xml:"photo"`
+	}{}
+	if err := flickrGet(c, getPhotoFavoritesURL(c, photo.ID, page, perPage), &r); err != nil {
+		return nil, err
+	}
+	if r.Stat != "ok" {
+		return nil, r.Err.Err()
+	}
+
+	return &r.Faves, nil
+}
+
 func pushSubscribeURL(c *Client, args map[string]string) string {
 	argsCopy := clone(args)
 	return makeURL(c, "flickr.push.subscribe", argsCopy, true)

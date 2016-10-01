@@ -64,6 +64,68 @@ type PhotoSet struct {
 	Description string `xml:"description"`
 }
 
+type PhotoInfoResponse struct {
+	PhotoInfo PhotoInfo `xml:"photo"`
+}
+type PhotoInfo struct {
+	ID           string `xml:"id,attr"`
+	Secret       string `xml:"secret,attr"`
+	Server       string `xml:"server,attr"`
+	Farm         string `xml:"farm,attr"`
+	DateUploaded string `xml:"dateuploaded,attr"`
+	IsFavorite   string `xml:"isfavorite,attr"`
+	License      string `xml:"license,attr"`
+	SafetyLevel  string `xml:"safety_level,attr"`
+	Rotation     string `xml:"rotation,attr"`
+	Views        string `xml:"views,attr"`
+	Media        string `xml:"media,attr"`
+	Owner        Owner  `xml:"owner"`
+	Title        string `xml:"title"`
+	Description  string `xml:"description"`
+	// IsPublic
+	Tags []Tag `xml:"tags>tag"`
+}
+
+type Owner struct {
+	NSID       string `xml:"nsid,attr"`
+	UserName   string `xml:"username,attr"`
+	RealName   string `xml:"realname,attr"`
+	Location   string `xml:"location,attr"`
+	IconServer string `xml:"iconserver,attr"`
+	IconFarm   string `xml:"iconfarm,attr"`
+	PathAlias  string `xml:"path_alias,attr"`
+}
+
+type Tag struct {
+	ID         string `xml:"id,attr"`
+	Author     string `xml:"author,attr"`
+	AuthorName string `xml:"authorname,attr"`
+	Raw        string `xml:"raw,attr"`
+	MachineTag string `xml:"machinetag,attr"`
+	Data       string `xml:",chardata"`
+}
+
+type PhotoFavoritesResponse struct {
+	ID      string `xml:"id,attr"`
+	Secret  string `xml:"secret,attr"`
+	Server  string `xml:"server,attr"`
+	Farm    string `xml:"farm,attr"`
+	Page    int    `xml:"page,attr"`
+	PerPage int    `xml:"per_page,attr"`
+	Total   int    `xml:"total,attr"`
+
+	Favorites []FavoritePerson `xml:"person"`
+}
+
+type FavoritePerson struct {
+	NSID       string `xml:"nsid,attr"`
+	UserName   string `xml:"username,attr"`
+	RealName   string `xml:"realname,attr"`
+	FaveDate   string `xml:"favedate,attr"`
+	IconServer string `xml:"iconserver,attr"`
+	IconFarm   string `xml:"iconfarm,attr"`
+}
+
 type LocationResponse struct {
 	Photo    string   `xml:"id,attr"`
 	Location Location `xml:"location"`
