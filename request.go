@@ -15,6 +15,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"time"
 )
 
 const (
@@ -132,6 +133,7 @@ func parseXML(in io.Reader, resp interface{}, logger Debugfer) error {
 
 // Sends a GET request to u and returns the response JSON.
 func fetch(c *Client, u string) (io.ReadCloser, error) {
+	waitForLimit(c)
 	r, getErr := c.httpClient.Get(u)
 	if getErr != nil {
 		return nil, wrapErr("GET failed", getErr)
@@ -158,6 +160,7 @@ func flickrPost(c *Client, req *http.Request, resp interface{}) error {
 	if c.Logger != nil {
 		c.Logger.Debugf("POST %v\n", req.URL)
 	}
+	waitForLimit(c)
 	r, rErr := c.httpClient.Do(req)
 	if rErr != nil {
 		return rErr
@@ -231,4 +234,16 @@ func uploadRequest(c *Client, filename string, photo []byte,
 	}
 	req.Header.Set("Content-Type", mpw.FormDataContentType())
 	return req, nil
+}
+
+func waitForLimit(c *Client) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	now := time.Now()
+	if c.lastRequest.Add(requestPeriod).Before(now) {
+		c.lastRequest = now
+		return
+	}
+	time.Sleep(now.Sub(c.lastRequest))
+	c.lastRequest = now
 }

@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
+	"time"
 )
 
 // Flickr API permission levels.  See
@@ -41,7 +43,13 @@ type Client struct {
 
 	// Client to use for HTTP communication.
 	httpClient *http.Client
+
+	// Prevent exceeding the Flickr limit of 3600 requests per hour.
+	mu          sync.Mutex
+	lastRequest time.Time
 }
+
+const requestPeriod = time.Second
 
 // Creates a new Client object.  See
 // http://www.flickr.com/services/api/misc.api_keys.html for learning about API
