@@ -20,10 +20,10 @@ const (
 
 // Response for photo search requests.
 type SearchResponse struct {
-	Page    string  `xml:"page,attr"`
-	Pages   string  `xml:"pages,attr"`
-	PerPage string  `xml:"perpage,attr"`
-	Total   string  `xml:"total,attr"`
+	Page    int     `xml:"page,attr"`
+	Pages   int     `xml:"pages,attr"`
+	PerPage int     `xml:"perpage,attr"`
+	Total   int     `xml:"total,attr"`
 	Photos  []Photo `xml:"photo"`
 }
 
