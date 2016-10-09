@@ -27,6 +27,14 @@ type SearchResponse struct {
 	Photos  []Photo `xml:"photo"`
 }
 
+type ContactsGetPublicListResponse struct {
+	Page     int    `xml:"page,attr"`
+	Pages    int    `xml:"pages,attr"`
+	PerPage  int    `xml:"perpage,attr"`
+	Total    int    `xml:"total,attr"`
+	Contacts []User `xml:"contact"`
+}
+
 // A Flickr user.
 type User struct {
 	UserName string `xml:"username,attr"`

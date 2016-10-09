@@ -321,6 +321,34 @@ func (c *Client) PhotosSearch(params PhotosSearchParams) (*SearchResponse, error
 	return &r.Photos, nil
 }
 
+type ContactsGetPublicListParams struct {
+	// The NSID of the user to fetch the contact list for.
+	UserID string `mapper:"user_id"`
+
+	// Number of photos to return per page. If this argument is omitted, it defaults to 1000. The maximum allowed value is 1000.
+	PerPage int `mapper:"per_page"`
+
+	// The page of results to return. If this argument is omitted, it defaults to 1.
+	Page int `mapper:"page"`
+}
+
+// Get the contact list for a user.  args contains search parameters as described in
+// http://www.flickr.com/services/api/flickr.contacts.getPublicList.html.
+func (c *Client) ContactsGetPublicList(params ContactsGetPublicListParams) (*ContactsGetPublicListResponse, error) {
+	r := struct {
+		Stat     string                        `xml:"stat,attr"`
+		Err      flickrError                   `xml:"err"`
+		Contacts ContactsGetPublicListResponse `xml:"contacts"`
+	}{}
+	if err := flickrGet(c, makeURL(c, "flickr.contacts.getPublicList", StructToMap(params), true), &r); err != nil {
+		return nil, err
+	}
+	if r.Stat != "ok" {
+		return nil, r.Err.Err()
+	}
+	return &r.Contacts, nil
+}
+
 // // Initiates an asynchronous photo upload and returns the ticket ID.  See
 // // http://www.flickr.com/services/api/upload.async.html for details.
 // func (c *Client) Upload(name string, photo []byte,
