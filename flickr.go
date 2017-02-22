@@ -451,28 +451,28 @@ func (c *Client) ContactsGetPublicList(params ContactsGetPublicListParams) (*Con
 // 	return nil
 // }
 
-// func getLocationURL(c *Client, args map[string]string) string {
-// 	argsCopy := clone(args)
-// 	return makeURL(c, "flickr.photos.geo.getLocation", argsCopy, true)
-// }
+func getLocationURL(c *Client, args map[string]string) string {
+	argsCopy := clone(args)
+	return makeURL(c, "flickr.photos.geo.getLocation", argsCopy, true)
+}
 
-// // Implements https://www.flickr.com/services/api/flickr.photos.geo.getLocation.html
-// func (c *Client) GetLocation(args map[string]string) (*LocationResponse, error) {
-// 	r := struct {
-// 		Stat     string           `xml:"stat,attr"`
-// 		Err      flickrError      `xml:"err"`
-// 		Location LocationResponse `xml:"photo"`
-// 	}{}
-// 	if err := flickrGet(c, getLocationURL(c, args), &r); err != nil {
-// 		return nil, err
-// 	}
+// Implements https://www.flickr.com/services/api/flickr.photos.geo.getLocation.html
+func (c *Client) GetLocation(args map[string]string) (*LocationResponse, error) {
+	r := struct {
+		Stat     string           `xml:"stat,attr"`
+		Err      flickrError      `xml:"err"`
+		Location LocationResponse `xml:"photo"`
+	}{}
+	if err := flickrGet(c, getLocationURL(c, args), &r); err != nil {
+		return nil, err
+	}
 
-// 	if r.Stat != "ok" {
-// 		return nil, r.Err.Err()
-// 	}
+	if r.Stat != "ok" {
+		return nil, r.Err.Err()
+	}
 
-// 	return &r.Location, nil
-// }
+	return &r.Location, nil
+}
 
 type PeopleGetInfoParams struct {
 	UserID string `mapper:"user_id"`
